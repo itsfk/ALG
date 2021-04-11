@@ -1,0 +1,1 @@
+with Quick sort it takes 20ms and with Bubble sort 24ms
