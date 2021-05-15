@@ -1,8 +1,5 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.*;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,23 +8,17 @@ public class LexiconTester {
         long startTime = System.currentTimeMillis();
 
 
-        String[] files = {"src/in1.txt", "src/in2.txt"};
-        String sortArg = "";
-        Boolean quickSort = false;
-        if (args.length > 0) {
-            sortArg = args[0];
-            quickSort = sortArg.equals("Y") ? true : false;
-        }
+        String[] files = {"in.txt"};
         HashMap<String, Integer> wordsCountHashMap = new HashMap<>();
         HashMap<String, ArrayList<String>> wordNeighborHashMap = new HashMap<>();
         ArrayList<String> allWords = getAllWordsFromAFileAndItsCount(wordsCountHashMap, files);
-        allWords = sortArrayOfStrings(allWords, quickSort);
-        addNeighbor(allWords, wordNeighborHashMap, quickSort);
+        allWords = sortArrayOfStrings(allWords);
+        addNeighbor(allWords, wordNeighborHashMap);
         try {
             for (String word :
                     allWords) {
                 String line = word + " " + wordsCountHashMap.get(word) + " " + wordNeighborHashMap.get(word);
-                writeOutToAFile("src/out.txt", line);
+                writeOutToAFile("out.txt", line);
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -93,14 +84,11 @@ public class LexiconTester {
         }
     }
 
-    public static ArrayList<String> sortArrayOfStrings(ArrayList<String> arrayList, Boolean quickSort) {
-        if (quickSort) {
-            return SortingAlgos.quickSort(arrayList);
-        }
-        return SortingAlgos.bubbleSort(arrayList);
+    public static ArrayList<String> sortArrayOfStrings(ArrayList<String> arrayList) {
+        return SortingAlgos.mergeSort(arrayList, 0, arrayList.size() - 1);
     }
 
-    public static void addNeighbor(ArrayList<String> words, HashMap<String, ArrayList<String>> wordNeighborHashMap, Boolean quickSort) {
+    public static void addNeighbor(ArrayList<String> words, HashMap<String, ArrayList<String>> wordNeighborHashMap) {
         for (int i = 0; i < words.size(); i++) {
             ArrayList<String> neighborWords = new ArrayList<>();
             double lengthOfWord = words.get(i).length();
@@ -126,7 +114,7 @@ public class LexiconTester {
                     }
                 }
             }
-            neighborWords = sortArrayOfStrings(neighborWords, quickSort);
+            neighborWords = sortArrayOfStrings(neighborWords);
             wordNeighborHashMap.put(wordToFind, neighborWords);
         }
     }
